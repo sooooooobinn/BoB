@@ -17,9 +17,8 @@ public class MealService {
     private static final OkHttpClient client = new OkHttpClient();
     private static final ObjectMapper mapper = new ObjectMapper();
 
-    private static final String API_KEY = "0b45766e-a460-42f5-90e6-56da2597d25d";
+    private static final String API_KEY = System.getenv("MEAL_API_KEY");
 
-    // 요청하신 #FBCAE0 (RGB: 251, 202, 224) 핑크 색상 상수로 정의
     private static final Color MAIN_PINK_COLOR = new Color(251, 202, 224);
 
     public static EmbedBuilder getTodayMeal(String command) {
@@ -50,7 +49,6 @@ public class MealService {
             targetMealType = "DINNER";
             mealNameKor = "내일 저녁";
         } else {
-            // 시간대별 자동 조건 분기
             if (nowTime.isBefore(LocalTime.of(7, 40))) {
                 targetMealType = "BREAKFAST";
                 mealNameKor = "오늘 아침";
@@ -85,7 +83,7 @@ public class MealService {
             if (!response.isSuccessful()) {
                 return embed.setTitle("❌ 오류 발생")
                         .setDescription("DG 급식 호출에 실패했습니다. status=" + response.code())
-                        .setColor(MAIN_PINK_COLOR); // 모든 안내/오류 메시지 색상 통일
+                        .setColor(MAIN_PINK_COLOR);
             }
 
             JsonNode jsonNode = mapper.readTree(responseBody);
@@ -95,7 +93,7 @@ public class MealService {
 
                 if (mealsArray.isEmpty()) {
                     return embed.setDescription("📅 [" + dateStr + "] 급식 정보가 없거나 휴일입니다. 🏖️")
-                            .setColor(MAIN_PINK_COLOR); // 색상 통일
+                            .setColor(MAIN_PINK_COLOR);
                 }
 
                 boolean foundMeal = false;
@@ -112,7 +110,7 @@ public class MealService {
                         else if (type.equalsIgnoreCase("DINNER")) icon = "🌙";
 
                         embed.setTitle(icon + " " + mealNameKor.replace("오늘 ", "").replace("내일 ", ""));
-                        embed.setColor(MAIN_PINK_COLOR); // 기존 오렌지색에서 핑크색(#FBCAE0)으로 변경
+                        embed.setColor(MAIN_PINK_COLOR);
 
                         StringBuilder menuBuilder = new StringBuilder();
                         if (meal.has("mealMenu")) {
@@ -131,7 +129,7 @@ public class MealService {
 
                 if (!foundMeal) {
                     return embed.setDescription("📅 [" + dateStr + "] " + mealNameKor + " 메뉴가 아직 등록되지 않았습니다. 🏖️")
-                            .setColor(MAIN_PINK_COLOR); // 색상 통일
+                            .setColor(MAIN_PINK_COLOR);
                 }
 
                 return embed;
@@ -150,7 +148,7 @@ public class MealService {
         EmbedBuilder embed = new EmbedBuilder();
 
         embed.setTitle("🤖 Void-Bob봇 명령어 안내");
-        embed.setColor(MAIN_PINK_COLOR); // 도움말 메시지 색상도 파란색에서 핑크색으로 변경
+        embed.setColor(MAIN_PINK_COLOR);
 
         StringBuilder sb = new StringBuilder();
         sb.append("💡 **기본 자동 조회**\n");
